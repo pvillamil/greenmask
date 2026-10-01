@@ -111,8 +111,8 @@
               </button>
             
             
-A new version 0.2.23 (2026.08.22) is <a
-  href="https://github.com/GreenmaskIO/greenmask/releases/tag/v0.2.23">released</a>
+A new version 0.2.25 (2026-09-30) is <a
+  href="https://github.com/GreenmaskIO/greenmask/releases/tag/v0.2.25">released</a>
 
           </div>
           
@@ -280,7 +280,7 @@ You're not viewing the latest version.
     
     
       <li class="md-tabs__item">
-        <a href="../release_notes/greenmask_0_2_23/" class="md-tabs__link">
+        <a href="../release_notes/greenmask_0_2_25/" class="md-tabs__link">
           
   
   
@@ -1448,6 +1448,8 @@ You're not viewing the latest version.
       
         
       
+        
+      
     
     
     
@@ -1571,6 +1573,34 @@ You're not viewing the latest version.
     
   
     Hash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../built_in_transformers/standard_transformers/hashed_password/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HashedPassword
   
 
     
@@ -3350,6 +3380,10 @@ You're not viewing the latest version.
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3392,6 +3426,62 @@ You're not viewing the latest version.
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release_notes/greenmask_0_2_25/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Greenmask 0.2.25
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release_notes/greenmask_0_2_24/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Greenmask 0.2.24
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -4943,6 +5033,9 @@ such as Amazon S3 or MinIO. Here are the parameters you can configure for S3 sto
 <li><code>use_list_objects_v1</code> — use the old v1 <code>ListObjects</code> request instead of v2 one</li>
 <li><code>force_path_style</code> — force the request to use path-style addressing (e. g., <code>http://s3.amazonaws.com/BUCKET/KEY</code>) instead of virtual hosted bucket addressing (e. g., <code>http://BUCKET.s3.amazonaws.com/KEY</code>)</li>
 <li><code>use_accelerate</code> — enable S3 Accelerate feature</li>
+<li><code>sse</code> — server-side encryption applied to the uploaded dump. One of <code>AES256</code> (SSE-S3), <code>aws:kms</code> (SSE-KMS) or <code>aws:kms:dsse</code> (DSSE-KMS). Applies to both single-part and multipart uploads</li>
+<li><code>kms_key_arn</code> — KMS key encrypting the dump when <code>sse</code> is <code>aws:kms</code> or <code>aws:kms:dsse</code>. If omitted, the bucket default KMS key is used. Setting it with any other <code>sse</code> value is a config error</li>
+<li><code>bucket_key_enabled</code> — enable <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html">S3 Bucket Keys</a>, which cut KMS request cost on large dumps. Requires <code>sse</code> to be <code>aws:kms</code> or <code>aws:kms:dsse</code></li>
 </ul>
 <div class="highlight"><span class="filename">s3 storage config example for Minio running in Docker</span><pre><span></span><code><span class="nt">storage</span><span class="p">:</span><span class="w">  </span>
 <span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;s3&quot;</span>
@@ -5190,7 +5283,9 @@ command. Here is an example of the validate section configuration:</p>
 <ul>
 <li><code>pg_restore_options</code> — a map of <code>pg_restore</code> options that are used to configure the behavior of
   the <code>pg_restore</code> utility during the restoration process. You can refer to the list of supported <code>pg_restore</code> options in the <a href="../commands/restore/">Greenmask restore command documentation</a>.</li>
-<li><code>scripts</code> — a map of custom scripts to be executed during different restoration stages. Each script is associated with a specific restoration stage and includes the following attributes:<ul>
+<li>
+<p><code>scripts</code> — a map of custom scripts to be executed during different restoration stages. Each script is associated with a specific restoration stage and includes the following attributes:</p>
+<ul>
 <li><code>[pre-data|data|post-data]</code> — the name of the restoration stage when the script should be executed; has the following parameters:<ul>
 <li><code>name</code> — the name of the script</li>
 <li><code>when</code> — specifies when to execute the script, which can be either <code>"before"</code> or <code>"after"</code> the
@@ -5201,9 +5296,17 @@ command. Here is an example of the validate section configuration:</p>
 </ul>
 </li>
 </ul>
+<p>Messages a script reports to the server — <code>RAISE NOTICE</code>, <code>RAISE WARNING</code> and friends —
+are forwarded to the Greenmask log: <code>WARNING</code> at <code>warn</code> level, <code>NOTICE</code>, <code>INFO</code> and <code>LOG</code>
+at <code>info</code>, <code>DEBUG</code> at <code>debug</code>. They are logged between the <code>executing script</code> and
+<code>script execution complete</code> entries of the script that produced them.</p>
+<p>Notices raised while dumping or restoring table data (for example by row-level triggers)
+are logged too, tagged with the worker id. On those connections <code>NOTICE</code>, <code>INFO</code> and <code>LOG</code>
+are logged at <code>debug</code> so a trigger raising one per row does not flood the log; <code>WARNING</code>
+stays at <code>warn</code>.
+* <code>insert_error_exclusions</code> — a list of error codes that should be ignored during the restoration process. This is 
+useful when you want to skip specific errors that are not critical for the restoration process.</p>
 </li>
-<li><code>insert_error_exclusions</code> — a list of error codes that should be ignored during the restoration process. This is 
-useful when you want to skip specific errors that are not critical for the restoration process.</li>
 </ul>
 <p>As mentioned in <a href="../architecture/#backup-process">the architecture</a>, a backup contains three sections: pre-data, data, and post-data. The custom script execution allows you to customize and control the restoration process by executing scripts or commands at specific stages. The available restoration stages and their corresponding execution conditions are as follows:</p>
 <ul>

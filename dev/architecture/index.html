@@ -109,8 +109,8 @@
               </button>
             
             
-A new version 0.2.23 (2026.08.22) is <a
-  href="https://github.com/GreenmaskIO/greenmask/releases/tag/v0.2.23">released</a>
+A new version 0.2.25 (2026-09-30) is <a
+  href="https://github.com/GreenmaskIO/greenmask/releases/tag/v0.2.25">released</a>
 
           </div>
           
@@ -278,7 +278,7 @@ You're not viewing the latest version.
     
     
       <li class="md-tabs__item">
-        <a href="../release_notes/greenmask_0_2_23/" class="md-tabs__link">
+        <a href="../release_notes/greenmask_0_2_25/" class="md-tabs__link">
           
   
   
@@ -1355,6 +1355,8 @@ You're not viewing the latest version.
       
         
       
+        
+      
     
     
     
@@ -1478,6 +1480,34 @@ You're not viewing the latest version.
     
   
     Hash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../built_in_transformers/standard_transformers/hashed_password/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HashedPassword
   
 
     
@@ -3257,6 +3287,10 @@ You're not viewing the latest version.
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3299,6 +3333,62 @@ You're not viewing the latest version.
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release_notes/greenmask_0_2_25/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Greenmask 0.2.25
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release_notes/greenmask_0_2_24/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Greenmask 0.2.24
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -4654,7 +4744,14 @@ interaction.</p>
 <p>Furthermore, Greenmask's architecture is designed to be highly extensible, making it possible to introduce other interaction protocols, such as HTTP or Socket, for conducting anonymization procedures.</p>
 </div>
 <h2 id="postgresql-version-compatibility">PostgreSQL version compatibility<a class="headerlink" href="#postgresql-version-compatibility" title="Permanent link">&para;</a></h2>
-<p>Greenmask is compatible with PostgreSQL versions <strong>11 and higher</strong>.</p>
+<p>Greenmask supports PostgreSQL <strong>14, 15, 16, 17 and 18</strong>.</p>
+<p>We support only major versions that are still supported upstream (non-EOL). Every listed version is
+exercised by the integration test suite on each release, so compatibility is verified rather than
+assumed. Versions past their upstream EOL date are dropped from the test matrix at the first release
+after that date — Greenmask will most likely keep working against them, but they are untested and
+unsupported.</p>
+<p>See <a href="../supporting_new_postgres/">Supporting a New PostgreSQL Version</a> for the support policy, the
+per-release compatibility procedure, and the current end-of-life dates.</p>
 
 
 
